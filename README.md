@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.png" alt="EMCI Logo" width="150" height="150" style="border-radius: 20px;">
+<img src="docs/images/logo.png" alt="EMCI Logo" width="150" height="150" style="border-radius: 20px;">
 
 # 🕳️ EMCI - 智能井盖检测管理系统
 
@@ -38,7 +38,7 @@
   <a href="#-项目结构">📁 项目结构</a>
 </p>
 
-<img src="dashboard.png" alt="Dashboard Preview" width="900" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+<img src="docs/images/dashboard.png" alt="Dashboard Preview" width="900" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
 
 </div>
 
