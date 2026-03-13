@@ -116,8 +116,8 @@ onUnmounted(() => {
 #index {
   color: #d3d6dd;
   width: 100%;
-  height: calc(100vh - 90px);
-  position: absolute;
+  height: 100%;
+  position: relative;
   overflow: hidden;
 
   .bg {
@@ -189,13 +189,13 @@ onUnmounted(() => {
 }
 
 .left-layout {
-  height: calc(100vh - 175px);
+  height: 100%;
   display: grid;
   grid-template-rows: 3fr 2fr;
 }
 
 .right-chart {
-  height: calc(100vh - 165px);
+  height: 100%;
   display: grid;
   grid-template-rows: 2fr 2fr 1fr;
 }

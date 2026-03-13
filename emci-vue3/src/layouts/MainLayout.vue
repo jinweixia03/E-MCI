@@ -136,7 +136,7 @@
       </div>
 
       <!-- 主内容 -->
-      <el-main class="main-content">
+      <el-main class="main-content" :class="{ 'no-scroll': isFullscreenPage }">
         <router-view v-slot="{ Component }">
           <transition name="page" mode="out-in">
             <component :is="Component" />
@@ -165,6 +165,12 @@ import {
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+
+// 需要全屏显示、无滚动的页面
+const fullscreenPages = ['/dashboard', '/drone', '/map', '/database', '/information']
+const isFullscreenPage = computed(() => {
+  return fullscreenPages.some(path => route.path === path || route.path.startsWith(path + '/'))
+})
 
 // 侧边栏折叠状态
 const isCollapse = ref(false)
@@ -673,6 +679,10 @@ onUnmounted(() => {
     &:hover {
       background: var(--text-muted);
     }
+  }
+
+  &.no-scroll {
+    overflow: hidden;
   }
 }
 

@@ -26,12 +26,12 @@ import CenterChartItem from './components/CenterChartItem/index.vue'
   $box-width: 300px;
   $box-height: 745px;
   padding: 16px;
-  height: calc(100vh - 175px);
+  height: 100%;
   min-width: $box-width;
   border-radius: 5px;
 
   .bg-color-black {
-    height: calc(100vh - 205px);
+    height: 100%;
     border-radius: 10px;
   }
 

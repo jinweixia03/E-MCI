@@ -79,14 +79,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { dashboardApi } from '@/api/dashboard'
+import type { DashboardStats } from '@/types/dashboard'
 import {
   Star, VideoCamera, MapLocation, ArrowUp, ArrowDown, ArrowRight,
-  Location, Tools, Monitor, Grid
+  Tools, Grid
 } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
+const stats = ref<DashboardStats | null>(null)
+
+// 获取统计数据
+const fetchStats = async () => {
+  try {
+    const res = await dashboardApi.getStats()
+    stats.value = res.data
+  } catch (error) {
+    console.error('获取统计数据失败:', error)
+  }
+}
+
+onMounted(() => {
+  fetchStats()
+})
 
 const isRepairer = computed(() => userStore.isRepairer)
 
@@ -94,7 +111,8 @@ const subtitleText = computed(() => {
   if (isRepairer.value) {
     return '请及时处理分配给你的维修任务'
   }
-  return '系统运行正常，今日已检测 128 个井盖'
+  const todayCount = stats.value?.detectionStats?.todayCount || 0
+  return `系统运行正常，今日已检测 ${todayCount} 个井盖`
 })
 
 const greeting = computed(() => {
@@ -107,11 +125,11 @@ const greeting = computed(() => {
   return '晚上好，今天辛苦了'
 })
 
-const statistics = [
+const statistics = computed(() => [
   {
     id: 1,
     icon: 'Location',
-    value: '256',
+    value: stats.value?.manholeStats?.totalCount?.toString() || '0',
     label: '井盖总数',
     change: 12,
     trend: 'up',
@@ -120,7 +138,7 @@ const statistics = [
   {
     id: 2,
     icon: 'VideoCamera',
-    value: '1,024',
+    value: (stats.value?.detectionStats?.totalCount || 0).toLocaleString(),
     label: '检测次数',
     change: 28,
     trend: 'up',
@@ -129,7 +147,7 @@ const statistics = [
   {
     id: 3,
     icon: 'Tools',
-    value: '32',
+    value: (stats.value?.repairStats?.pendingCount || 0).toString(),
     label: '待维修',
     change: 5,
     trend: 'down',
@@ -138,13 +156,13 @@ const statistics = [
   {
     id: 4,
     icon: 'Grid',
-    value: '18',
+    value: (stats.value?.droneStats?.totalCount || 0).toString(),
     label: '无人机',
     change: 2,
     trend: 'up',
     gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
   }
-]
+])
 
 const quickActions = [
   {
@@ -266,8 +284,8 @@ const filteredQuickActions = computed(() => {
         height: 44px;
 
         &--primary {
-          background: white;
-          color: #667eea;
+          background: #409eff;
+          color: white;
           border: none;
 
           &:hover {

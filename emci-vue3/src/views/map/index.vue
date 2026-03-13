@@ -233,7 +233,7 @@
             <el-icon><Minus /></el-icon>
           </el-button>
         </el-button-group>
-        <el-button @click="resetMap" title="重置视图">
+        <el-button type="primary" @click="resetMap" title="重置视图">
           <el-icon><Refresh /></el-icon>重置
         </el-button>
         <el-button @click="locateMe" title="定位当前位置" type="primary">
@@ -246,7 +246,7 @@
         >
           <el-icon><Connection /></el-icon>聚合
         </el-button>
-        <el-button type="success" @click="loadManholes" title="刷新当前视野数据">
+        <el-button type="primary" @click="loadManholes" title="刷新当前视野数据">
           <el-icon><Refresh /></el-icon>刷新
         </el-button>
       </div>
@@ -956,7 +956,8 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .map-page {
   display: flex;
-  height: calc(100vh - 170px); // 减去顶部导航栏高度，留出底部空间
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 

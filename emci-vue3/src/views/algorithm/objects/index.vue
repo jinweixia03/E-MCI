@@ -55,7 +55,7 @@ const closeAccount = () => {
 }
 
 .profile-upload {
-  height: calc(100vh - 164px);
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

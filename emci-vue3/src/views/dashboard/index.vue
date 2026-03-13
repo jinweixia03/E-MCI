@@ -1,129 +1,161 @@
 <template>
   <div class="dashboard-page">
-    <!-- 头部 -->
-    <div class="dashboard-header">
-      <div class="header-decoration left"></div>
-      <h1 class="header-title">智慧井盖运维管理数据大屏</h1>
-      <div class="header-decoration right"></div>
-      <div class="header-time">
-        <span>{{ currentDate }}</span>
-        <span>{{ currentTime }}</span>
-      </div>
-    </div>
-
     <!-- 主体内容 -->
     <div class="dashboard-body">
-      <!-- 左侧 -->
-      <div class="dashboard-left">
-        <!-- 井盖统计卡片 -->
-        <div class="chart-box">
-          <div class="chart-title">
-            <span class="title-icon"></span>
-            <span>井盖概况</span>
-          </div>
-          <div class="manhole-stats">
-            <div class="stat-item total">
-              <div class="stat-value">{{ stats?.manholeStats?.totalCount || 0 }}</div>
-              <div class="stat-label">井盖总数</div>
-            </div>
-            <div class="stat-item normal">
-              <div class="stat-value">{{ stats?.manholeStats?.normalCount || 0 }}</div>
-              <div class="stat-label">正常</div>
-            </div>
-            <div class="stat-item damaged">
-              <div class="stat-value">{{ stats?.manholeStats?.damagedCount || 0 }}</div>
-              <div class="stat-label">损坏</div>
-            </div>
-            <div class="stat-item repairing">
-              <div class="stat-value">{{ stats?.manholeStats?.repairingCount || 0 }}</div>
-              <div class="stat-label">维修中</div>
-            </div>
+      <!-- 顶部统计行 - 15% -->
+      <div class="section stats-section">
+        <div class="stat-card total">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.manholeStats?.totalCount || 0 }}</div>
+            <div class="stat-label">井盖总数</div>
           </div>
         </div>
+        <div class="stat-card normal">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.manholeStats?.normalCount || 0 }}</div>
+            <div class="stat-label">正常</div>
+          </div>
+        </div>
+        <div class="stat-card damaged">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.manholeStats?.damagedCount || 0 }}</div>
+            <div class="stat-label">损坏</div>
+          </div>
+        </div>
+        <div class="stat-card repairing">
+          <div class="stat-icon">🔧</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.manholeStats?.repairingCount || 0 }}</div>
+            <div class="stat-label">维修中</div>
+          </div>
+        </div>
+        <div class="stat-card detection">
+          <div class="stat-icon">🔍</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.detectionStats?.todayCount || 0 }}</div>
+            <div class="stat-label">今日检测</div>
+          </div>
+        </div>
+        <div class="stat-card defect">
+          <div class="stat-icon">🐛</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.detectionStats?.todayDefectCount || 0 }}</div>
+            <div class="stat-label">今日缺陷</div>
+          </div>
+        </div>
+        <div class="stat-card drone">
+          <div class="stat-icon">🚁</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.droneStats?.onlineCount || 0 }}/{{ stats?.droneStats?.totalCount || 0 }}</div>
+            <div class="stat-label">无人机在线</div>
+          </div>
+        </div>
+        <div class="stat-card repair">
+          <div class="stat-icon">📋</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats?.repairStats?.pendingCount || 0 }}</div>
+            <div class="stat-label">待处理任务</div>
+          </div>
+        </div>
+      </div>
 
-        <!-- 状态分布饼图 -->
+      <!-- 图表区域 - 45% -->
+      <div class="section charts-section">
         <div class="chart-box">
-          <div class="chart-title">
+          <div class="box-title">
             <span class="title-icon"></span>
             <span>井盖状态分布</span>
           </div>
-          <div ref="statusChart" class="chart-content"></div>
+          <div ref="statusChart" class="chart-container"></div>
         </div>
-
-        <!-- 井盖类型分布 -->
-        <div class="chart-box">
-          <div class="chart-title">
-            <span class="title-icon"></span>
-            <span>井盖类型分布</span>
-          </div>
-          <div ref="typeChart" class="chart-content"></div>
-        </div>
-      </div>
-
-      <!-- 中间 -->
-      <div class="dashboard-center">
-        <!-- 地图 -->
-        <div class="chart-box map-box">
-          <div class="chart-title">
-            <span class="title-icon"></span>
-            <span>井盖分布地图</span>
-          </div>
-          <div id="dashboard-map" class="map-content"></div>
-        </div>
-
-        <!-- 检测趋势 -->
-        <div class="chart-box">
-          <div class="chart-title">
+        <div class="chart-box center">
+          <div class="box-title">
             <span class="title-icon"></span>
             <span>近7天检测趋势</span>
           </div>
-          <div ref="trendChart" class="chart-content"></div>
+          <div ref="trendChart" class="chart-container"></div>
         </div>
-      </div>
-
-      <!-- 右侧 -->
-      <div class="dashboard-right">
-        <!-- 检测统计 -->
         <div class="chart-box">
-          <div class="chart-title">
-            <span class="title-icon"></span>
-            <span>检测统计</span>
-          </div>
-          <div class="detection-stats">
-            <div class="detection-item">
-              <div class="detection-label">今日检测</div>
-              <div class="detection-value">{{ stats?.detectionStats?.todayCount || 0 }}</div>
-              <div class="detection-sub">缺陷: {{ stats?.detectionStats?.todayDefectCount || 0 }}</div>
-            </div>
-            <div class="detection-item">
-              <div class="detection-label">本周检测</div>
-              <div class="detection-value">{{ stats?.detectionStats?.weekCount || 0 }}</div>
-              <div class="detection-sub">缺陷: {{ stats?.detectionStats?.weekDefectCount || 0 }}</div>
-            </div>
-            <div class="detection-item">
-              <div class="detection-label">本月检测</div>
-              <div class="detection-value">{{ stats?.detectionStats?.monthCount || 0 }}</div>
-              <div class="detection-sub">缺陷: {{ stats?.detectionStats?.monthDefectCount || 0 }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 缺陷类型分布 -->
-        <div class="chart-box">
-          <div class="chart-title">
+          <div class="box-title">
             <span class="title-icon"></span>
             <span>缺陷类型分布</span>
           </div>
-          <div ref="defectChart" class="chart-content"></div>
+          <div ref="defectChart" class="chart-container"></div>
         </div>
+      </div>
 
-        <!-- 维修任务统计 -->
-        <div class="chart-box">
-          <div class="chart-title">
+      <!-- 底部区域 - 40% -->
+      <div class="section bottom-section">
+        <div class="info-box">
+          <div class="box-title">
+            <span class="title-icon"></span>
+            <span>井盖类型分布</span>
+          </div>
+          <div ref="typeChart" class="chart-container"></div>
+        </div>
+        <div class="info-box kpi-box">
+          <div class="kpi-item">
+            <div class="kpi-label">设备完好率</div>
+            <div class="kpi-value">{{ stats?.manholeStats?.normalRate || 0 }}%</div>
+            <div class="kpi-bar">
+              <div class="bar-fill" :style="{ width: (stats?.manholeStats?.normalRate || 0) + '%' }"></div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-label">维修完成率</div>
+            <div class="kpi-value">{{ stats?.repairStats?.completionRate || 0 }}%</div>
+            <div class="kpi-bar">
+              <div class="bar-fill" :style="{ width: (stats?.repairStats?.completionRate || 0) + '%' }"></div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-label">无人机在线率</div>
+            <div class="kpi-value">{{ stats?.droneStats?.onlineRate || 0 }}%</div>
+            <div class="kpi-bar">
+              <div class="bar-fill" :style="{ width: (stats?.droneStats?.onlineRate || 0) + '%' }"></div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-label">累计检测</div>
+            <div class="kpi-value">{{ stats?.detectionStats?.totalCount || 0 }}</div>
+            <div class="kpi-sub">本周: {{ stats?.detectionStats?.weekCount || 0 }}</div>
+          </div>
+        </div>
+        <div class="info-box list-box">
+          <div class="box-title">
+            <span class="title-icon"></span>
+            <span>实时检测记录</span>
+          </div>
+          <div class="list-container">
+            <div class="list-header">
+              <span>井盖编号</span>
+              <span>时间</span>
+              <span>缺陷</span>
+              <span>状态</span>
+            </div>
+            <div class="list-body">
+              <div v-for="(item, index) in recentDetections" :key="index" class="list-row">
+                <span class="manhole-id">{{ item.manholeId }}</span>
+                <span class="time">{{ formatTime(item.detectionTime) }}</span>
+                <span class="defect" :class="item.defectCount > 0 ? 'has-defect' : 'no-defect'">
+                  {{ item.defectCount }}
+                </span>
+                <span class="status" :class="getStatusClass(item.status)">
+                  {{ getStatusText(item.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="info-box repair-box">
+          <div class="box-title">
             <span class="title-icon"></span>
             <span>维修任务</span>
           </div>
-          <div class="repair-stats">
+          <div class="repair-list">
             <div class="repair-item pending">
               <div class="repair-icon">⏳</div>
               <div class="repair-info">
@@ -147,49 +179,19 @@
             </div>
           </div>
         </div>
-
-        <!-- 无人机状态 -->
-        <div class="chart-box">
-          <div class="chart-title">
-            <span class="title-icon"></span>
-            <span>无人机状态</span>
-          </div>
-          <div class="drone-stats">
-            <div class="drone-item">
-              <div class="drone-value">{{ stats?.droneStats?.totalCount || 0 }}</div>
-              <div class="drone-label">总数</div>
-            </div>
-            <div class="drone-item online">
-              <div class="drone-value">{{ stats?.droneStats?.onlineCount || 0 }}</div>
-              <div class="drone-label">在线</div>
-            </div>
-            <div class="drone-item offline">
-              <div class="drone-value">{{ stats?.droneStats?.offlineCount || 0 }}</div>
-              <div class="drone-label">离线</div>
-            </div>
-            <div class="drone-item fault">
-              <div class="drone-value">{{ stats?.droneStats?.faultCount || 0 }}</div>
-              <div class="drone-label">故障</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import * as echarts from 'echarts'
-import AMapLoader from '@amap/amap-jsapi-loader'
 import { dashboardApi } from '@/api/dashboard'
-import type { DashboardStats } from '@/types/dashboard'
+import type { DashboardStats, RecentDetection } from '@/types/dashboard'
 
 const stats = ref<DashboardStats | null>(null)
-const currentTime = ref('')
-const currentDate = ref('')
 
-// 图表实例
 const statusChart = ref<HTMLDivElement>()
 const typeChart = ref<HTMLDivElement>()
 const trendChart = ref<HTMLDivElement>()
@@ -199,43 +201,67 @@ let statusChartInstance: echarts.ECharts | null = null
 let typeChartInstance: echarts.ECharts | null = null
 let trendChartInstance: echarts.ECharts | null = null
 let defectChartInstance: echarts.ECharts | null = null
-let mapInstance: any = null
 
-let timer: ReturnType<typeof setInterval> | null = null
+const recentDetections = computed<RecentDetection[]>(() => {
+  if (stats.value?.recentDetections?.length) {
+    return stats.value.recentDetections.slice(0, 5)
+  }
+  return [
+    { manholeId: 'MH001', detectionTime: '2024-01-15 09:30:00', defectCount: 0, status: 0 },
+    { manholeId: 'MH002', detectionTime: '2024-01-15 09:25:00', defectCount: 2, status: 1 },
+    { manholeId: 'MH003', detectionTime: '2024-01-15 09:20:00', defectCount: 0, status: 0 },
+    { manholeId: 'MH004', detectionTime: '2024-01-15 09:15:00', defectCount: 1, status: 1 },
+    { manholeId: 'MH005', detectionTime: '2024-01-15 09:10:00', defectCount: 0, status: 0 }
+  ] as RecentDetection[]
+})
 
-// 更新时间
-const updateTime = () => {
-  const now = new Date()
-  currentTime.value = now.toLocaleTimeString('zh-CN')
-  currentDate.value = now.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' })
+const formatTime = (time: string) => {
+  if (!time) return '-'
+  return time.split(' ')[1]?.substring(0, 5) || time
 }
 
-// 加载数据
+const getStatusText = (status: number) => {
+  const map: Record<number, string> = { 0: '正常', 1: '异常', 2: '维修' }
+  return map[status] || '未知'
+}
+
+const getStatusClass = (status: number) => {
+  const map: Record<number, string> = { 0: 'status-normal', 1: 'status-error', 2: 'status-repair' }
+  return map[status] || ''
+}
+
 const loadData = async () => {
   try {
     const res = await dashboardApi.getStats()
     stats.value = res.data
-    initCharts()
+    nextTick(() => initCharts())
   } catch (error) {
     console.error('加载数据失败:', error)
   }
 }
 
-// 初始化图表
 const initCharts = () => {
   if (!stats.value) return
 
-  // 状态分布饼图
   if (statusChart.value) {
+    statusChartInstance?.dispose()
     statusChartInstance = echarts.init(statusChart.value)
     statusChartInstance.setOption({
-      tooltip: { trigger: 'item' },
-      legend: { bottom: '5%', textStyle: { color: '#fff' } },
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: {
+        orient: 'vertical',
+        right: '2%',
+        top: 'center',
+        textStyle: { color: '#fff', fontSize: 11 },
+        itemWidth: 10,
+        itemHeight: 10
+      },
       series: [{
         type: 'pie',
-        radius: ['40%', '70%'],
+        radius: ['40%', '65%'],
+        center: ['35%', '50%'],
         avoidLabelOverlap: false,
-        itemStyle: { borderRadius: 10, borderColor: '#0f1c3f', borderWidth: 2 },
+        itemStyle: { borderRadius: 6, borderColor: '#0f1c3f', borderWidth: 2 },
         label: { show: false },
         data: stats.value.statusDistribution?.map(item => ({
           name: item.name,
@@ -246,132 +272,139 @@ const initCharts = () => {
     })
   }
 
-  // 类型分布柱状图
   if (typeChart.value) {
+    typeChartInstance?.dispose()
     typeChartInstance = echarts.init(typeChart.value)
     typeChartInstance.setOption({
       tooltip: { trigger: 'axis' },
-      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      grid: { left: '3%', right: '5%', bottom: '5%', top: '15%', containLabel: true },
       xAxis: {
         type: 'category',
         data: stats.value.manholeTypeDistribution?.map(item => item.name) || [],
-        axisLabel: { color: '#fff' },
+        axisLabel: { color: '#8c9bb3', fontSize: 10 },
         axisLine: { lineStyle: { color: '#333' } }
       },
       yAxis: {
         type: 'value',
-        axisLabel: { color: '#fff' },
-        splitLine: { lineStyle: { color: '#333' } }
+        axisLabel: { color: '#8c9bb3', fontSize: 10 },
+        splitLine: { lineStyle: { color: '#1a2a4a' } }
       },
       series: [{
         type: 'bar',
         data: stats.value.manholeTypeDistribution?.map(item => ({
           value: item.count,
-          itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#409eff' }, { offset: 1, color: '#1e3a8a' }]) }
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#409eff' },
+              { offset: 1, color: '#1e3a8a' }
+            ])
+          }
         })) || [],
-        barWidth: '60%'
+        barWidth: '50%',
+        itemStyle: { borderRadius: [3, 3, 0, 0] }
       }]
     })
   }
 
-  // 检测趋势折线图
   if (trendChart.value) {
+    trendChartInstance?.dispose()
     trendChartInstance = echarts.init(trendChart.value)
     trendChartInstance.setOption({
       tooltip: { trigger: 'axis' },
-      legend: { data: ['检测数', '缺陷数'], textStyle: { color: '#fff' } },
-      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      legend: {
+        data: ['检测数', '缺陷数'],
+        textStyle: { color: '#8c9bb3', fontSize: 11 },
+        top: 5,
+        itemWidth: 12,
+        itemHeight: 8
+      },
+      grid: { left: '3%', right: '4%', bottom: '5%', top: '20%', containLabel: true },
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: stats.value.detectionTrend?.map(item => item.date) || [],
-        axisLabel: { color: '#fff' },
+        data: stats.value.detectionTrend?.map(item => item.date?.slice(5)) || [],
+        axisLabel: { color: '#8c9bb3', fontSize: 10 },
         axisLine: { lineStyle: { color: '#333' } }
       },
       yAxis: {
         type: 'value',
-        axisLabel: { color: '#fff' },
-        splitLine: { lineStyle: { color: '#333' } }
+        axisLabel: { color: '#8c9bb3', fontSize: 10 },
+        splitLine: { lineStyle: { color: '#1a2a4a' } }
       },
       series: [
         {
           name: '检测数',
           type: 'line',
           smooth: true,
+          symbol: 'circle',
+          symbolSize: 4,
           data: stats.value.detectionTrend?.map(item => item.detectionCount) || [],
           areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(64,158,255,0.3)' }, { offset: 1, color: 'rgba(64,158,255,0)' }])
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(64,158,255,0.3)' },
+              { offset: 1, color: 'rgba(64,158,255,0)' }
+            ])
           },
-          lineStyle: { color: '#409eff' }
+          lineStyle: { color: '#409eff', width: 2 },
+          itemStyle: { color: '#409eff' }
         },
         {
           name: '缺陷数',
           type: 'line',
           smooth: true,
+          symbol: 'circle',
+          symbolSize: 4,
           data: stats.value.detectionTrend?.map(item => item.defectCount) || [],
           areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(245,108,108,0.3)' }, { offset: 1, color: 'rgba(245,108,108,0)' }])
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(245,108,108,0.3)' },
+              { offset: 1, color: 'rgba(245,108,108,0)' }
+            ])
           },
-          lineStyle: { color: '#f56c6c' }
+          lineStyle: { color: '#f56c6c', width: 2 },
+          itemStyle: { color: '#f56c6c' }
         }
       ]
     })
   }
 
-  // 缺陷类型横向柱状图
   if (defectChart.value) {
+    defectChartInstance?.dispose()
     defectChartInstance = echarts.init(defectChart.value)
+    const defectData = stats.value.defectTypeDistribution?.slice().reverse() || []
     defectChartInstance.setOption({
       tooltip: { trigger: 'axis' },
-      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      grid: { left: '3%', right: '15%', bottom: '5%', top: '5%', containLabel: true },
       xAxis: {
         type: 'value',
-        axisLabel: { color: '#fff' },
-        splitLine: { lineStyle: { color: '#333' } }
+        axisLabel: { color: '#8c9bb3', fontSize: 9 },
+        splitLine: { lineStyle: { color: '#1a2a4a' } }
       },
       yAxis: {
         type: 'category',
-        data: stats.value.defectTypeDistribution?.map(item => item.name).reverse() || [],
-        axisLabel: { color: '#fff' },
+        data: defectData.map(item => item.name),
+        axisLabel: { color: '#8c9bb3', fontSize: 10 },
         axisLine: { lineStyle: { color: '#333' } }
       },
       series: [{
         type: 'bar',
-        data: stats.value.defectTypeDistribution?.map(item => ({
+        data: defectData.map(item => ({
           value: item.count,
-          itemStyle: { color: '#e6a23c' }
-        })).reverse() || [],
-        barWidth: '50%',
-        label: { show: true, position: 'right', color: '#fff' }
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+              { offset: 0, color: '#e6a23c' },
+              { offset: 1, color: '#d48c1f' }
+            ])
+          }
+        })),
+        barWidth: '55%',
+        itemStyle: { borderRadius: [0, 3, 3, 0] },
+        label: { show: true, position: 'right', color: '#fff', fontSize: 10 }
       }]
     })
   }
 }
 
-// 初始化地图
-const initMap = async () => {
-  try {
-    ;(window as any)._AMapSecurityConfig = {
-      securityJsCode: 'a8cc4b1f9059d7e80c3b2c28ee3e9e31'
-    }
-
-    const AMap = await AMapLoader.load({
-      key: '0713d505f8ee48a9c7fe9d43f7e2fef5',
-      version: '2.0'
-    })
-
-    mapInstance = new AMap.Map('dashboard-map', {
-      zoom: 11,
-      center: [118.796877, 32.060255],
-      viewMode: '2D',
-      mapStyle: 'amap://styles/dark'
-    })
-  } catch (error) {
-    console.error('地图加载失败:', error)
-  }
-}
-
-// 窗口大小改变时重绘图表
 const handleResize = () => {
   statusChartInstance?.resize()
   typeChartInstance?.resize()
@@ -380,20 +413,15 @@ const handleResize = () => {
 }
 
 onMounted(() => {
-  updateTime()
-  timer = setInterval(updateTime, 1000)
   loadData()
-  initMap()
   window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
-  if (timer) clearInterval(timer)
   statusChartInstance?.dispose()
   typeChartInstance?.dispose()
   trendChartInstance?.dispose()
   defectChartInstance?.dispose()
-  mapInstance?.destroy()
   window.removeEventListener('resize', handleResize)
 })
 </script>
@@ -401,267 +429,305 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .dashboard-page {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 50%, #0f1629 100%);
   color: #fff;
+  border-radius: 8px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-// 头部
-.dashboard-header {
-  height: 70px;
+// 主体 - 占满整个容器
+.dashboard-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 12px;
+}
+
+// 通用区块样式
+.section {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+.box-title {
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  background: linear-gradient(90deg, transparent 0%, rgba(64,158,255,0.1) 20%, rgba(64,158,255,0.2) 50%, rgba(64,158,255,0.1) 80%, transparent 100%);
-  border-bottom: 1px solid rgba(64,158,255,0.3);
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 
-  .header-decoration {
-    width: 200px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #409eff, transparent);
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #409eff;
-      border-radius: 50%;
-      top: -4px;
-    }
-
-    &.left::before { right: 0; }
-    &.right::before { left: 0; }
-  }
-
-  .header-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin: 0 30px;
-    background: linear-gradient(90deg, #fff, #409eff, #fff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(64,158,255,0.5);
-  }
-
-  .header-time {
-    position: absolute;
-    right: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: 14px;
-    color: #8c9bb3;
+  .title-icon {
+    width: 4px;
+    height: 14px;
+    background: linear-gradient(180deg, #409eff, #1e3a8a);
+    border-radius: 2px;
   }
 }
 
-// 主体
-.dashboard-body {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  gap: 15px;
-  padding: 15px;
-  overflow: hidden;
-}
+// 统计区块 - 固定高度
+.stats-section {
+  height: 80px;
+  flex-shrink: 0;
 
-// 通用图表盒子
-.chart-box {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(64,158,255,0.2);
-  border-radius: 8px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-
-  .chart-title {
+  .stat-card {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-    margin-bottom: 15px;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(64,158,255,0.15);
+    border-radius: 6px;
+    padding: 8px;
 
-    .title-icon {
-      width: 4px;
-      height: 16px;
-      background: linear-gradient(180deg, #409eff, #1e3a8a);
-      border-radius: 2px;
+    .stat-icon {
+      font-size: 20px;
     }
-  }
 
-  .chart-content {
-    flex: 1;
-    min-height: 0;
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #8c9bb3;
+    }
+
+    &.total { border-left: 3px solid #409eff; .stat-value { color: #409eff; } }
+    &.normal { border-left: 3px solid #67c23a; .stat-value { color: #67c23a; } }
+    &.damaged { border-left: 3px solid #f56c6c; .stat-value { color: #f56c6c; } }
+    &.repairing { border-left: 3px solid #e6a23c; .stat-value { color: #e6a23c; } }
+    &.detection { border-left: 3px solid #409eff; .stat-value { color: #409eff; } }
+    &.defect { border-left: 3px solid #f56c6c; .stat-value { color: #f56c6c; } }
+    &.drone { border-left: 3px solid #67c23a; .stat-value { color: #67c23a; } }
+    &.repair { border-left: 3px solid #e6a23c; .stat-value { color: #e6a23c; } }
   }
 }
 
-// 左侧
-.dashboard-left {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+// 图表区块 - 自适应
+.charts-section {
+  flex: 1.2;
+  min-height: 0;
 
-  .manhole-stats {
+  .chart-box {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(64,158,255,0.15);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    &.center {
+      flex: 1.5;
+    }
+
+    .chart-container {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+}
+
+// 底部区块 - 自适应
+.bottom-section {
+  flex: 1;
+  min-height: 0;
+
+  .info-box {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(64,158,255,0.15);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+
+    .chart-container {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  // KPI盒子
+  .kpi-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
+    padding: 12px;
 
-    .stat-item {
+    .kpi-item {
       background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      border-left: 4px solid;
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
-      &.total { border-color: #409eff; }
-      &.normal { border-color: #67c23a; }
-      &.damaged { border-color: #f56c6c; }
-      &.repairing { border-color: #e6a23c; }
-
-      .stat-value {
-        font-size: 28px;
-        font-weight: bold;
-        color: #fff;
-      }
-
-      .stat-label {
-        font-size: 12px;
-        color: #8c9bb3;
-        margin-top: 5px;
-      }
-    }
-  }
-}
-
-// 中间
-.dashboard-center {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-
-  .map-box {
-    flex: 1.5;
-
-    .map-content {
-      flex: 1;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-  }
-}
-
-// 右侧
-.dashboard-right {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-
-  .detection-stats {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-
-    .detection-item {
-      flex: 1;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-
-      .detection-label {
-        font-size: 12px;
+      .kpi-label {
+        font-size: 11px;
         color: #8c9bb3;
       }
 
-      .detection-value {
-        font-size: 24px;
+      .kpi-value {
+        font-size: 18px;
         font-weight: bold;
         color: #409eff;
-        margin: 5px 0;
+        margin: 4px 0;
       }
 
-      .detection-sub {
-        font-size: 11px;
-        color: #f56c6c;
+      .kpi-bar {
+        height: 4px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 2px;
+        overflow: hidden;
+
+        .bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #409eff, #67c23a);
+          border-radius: 2px;
+        }
+      }
+
+      .kpi-sub {
+        font-size: 10px;
+        color: #8c9bb3;
       }
     }
   }
 
-  .repair-stats {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
+  // 列表盒子
+  .list-box {
+    flex: 1.2;
 
-    .repair-item {
+    .list-container {
       flex: 1;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 10px;
+      flex-direction: column;
+      overflow: hidden;
 
-      .repair-icon {
-        font-size: 24px;
+      .list-header {
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr 0.6fr 0.7fr;
+        gap: 8px;
+        padding: 8px;
+        background: rgba(64,158,255,0.1);
+        border-radius: 4px;
+        font-size: 11px;
+        color: #8c9bb3;
+        text-align: center;
+        flex-shrink: 0;
       }
 
-      .repair-info {
-        .repair-value {
+      .list-body {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        .list-row {
+          display: grid;
+          grid-template-columns: 1.2fr 0.9fr 0.6fr 0.7fr;
+          gap: 8px;
+          padding: 6px 8px;
+          font-size: 12px;
+          text-align: center;
+          align-items: center;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .manhole-id {
+            color: #409eff;
+            font-weight: 500;
+          }
+
+          .time {
+            color: #8c9bb3;
+          }
+
+          .defect {
+            font-weight: bold;
+            &.has-defect { color: #f56c6c; }
+            &.no-defect { color: #67c23a; }
+          }
+
+          .status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+
+            &.status-normal {
+              background: rgba(103,194,58,0.2);
+              color: #67c23a;
+            }
+
+            &.status-error {
+              background: rgba(245,108,108,0.2);
+              color: #f56c6c;
+            }
+
+            &.status-repair {
+              background: rgba(230,162,60,0.2);
+              color: #e6a23c;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 维修盒子
+  .repair-box {
+    flex: 0.8;
+
+    .repair-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .repair-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 6px;
+        padding: 0 12px;
+
+        .repair-icon {
           font-size: 20px;
+        }
+
+        .repair-value {
+          font-size: 18px;
           font-weight: bold;
-          color: #fff;
         }
 
         .repair-label {
-          font-size: 12px;
+          font-size: 11px;
           color: #8c9bb3;
         }
+
+        &.pending { border-left: 3px solid #e6a23c; .repair-value { color: #e6a23c; } }
+        &.progress { border-left: 3px solid #409eff; .repair-value { color: #409eff; } }
+        &.completed { border-left: 3px solid #67c23a; .repair-value { color: #67c23a; } }
       }
-
-      &.pending { border-left: 3px solid #e6a23c; }
-      &.progress { border-left: 3px solid #409eff; }
-      &.completed { border-left: 3px solid #67c23a; }
-    }
-  }
-
-  .drone-stats {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-
-    .drone-item {
-      flex: 1;
-      text-align: center;
-      padding: 10px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-
-      .drone-value {
-        font-size: 22px;
-        font-weight: bold;
-        color: #fff;
-      }
-
-      .drone-label {
-        font-size: 12px;
-        color: #8c9bb3;
-        margin-top: 5px;
-      }
-
-      &.online .drone-value { color: #67c23a; }
-      &.offline .drone-value { color: #909399; }
-      &.fault .drone-value { color: #f56c6c; }
     }
   }
 }
-
-:deep(.amap-logo) { display: none !important; }
-:deep(.amap-copyright) { display: none !important; }
 </style>
