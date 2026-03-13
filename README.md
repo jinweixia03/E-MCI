@@ -38,7 +38,7 @@
   <a href="#-项目结构">📁 项目结构</a>
 </p>
 
-<img src="https://placehold.co/900x450/1a1f3a/FFFFFF?text=Dashboard+Preview" alt="Dashboard Preview" width="900" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+<img src="dashboard.png" alt="Dashboard Preview" width="900" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
 
 </div>
 
