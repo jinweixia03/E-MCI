@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*
-;import java.nio.file.Files;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -35,32 +35,16 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
 
     @Override
     public FileUploadVO uploadFile(MultipartFile file, String directory) {
-        try {
-            String originalName = file.getOriginalFilename();
-            String extension = getExtension(originalName);
-            String fileName = UUID.randomUUID().toString() + "." + extension;
+        String originalName = file.getOriginalFilename();
+        String extension = getExtension(originalName);
+        String fileName = UUID.randomUUID().toString() + "." + extension;
 
-            // 构建存储路径
-            Path dirPath = Paths.get(getStoragePath(), directory);
-            Files.createDirectories(dirPath);
+        Path filePath = writeFile(file, directory, fileName, false);
+        String fileUrl = buildFileUrl(directory, fileName);
 
-            Path filePath = dirPath.resolve(fileName);
-            Files.write(filePath, file.getBytes());
+        log.info("文件上传成功 (本地): {}", fileUrl);
 
-            String fileUrl = getUrlPrefix() + "/" + directory + "/" + fileName;
-
-            log.info("文件上传成功 (本地): {}", fileUrl);
-
-            return FileUploadVO.builder()
-                    .url(fileUrl)
-                    .originalName(originalName)
-                    .size(file.getSize())
-                    .contentType(file.getContentType())
-                    .build();
-        } catch (IOException e) {
-            log.error("文件上传失败", e);
-            throw new RuntimeException("文件上传失败: " + e.getMessage());
-        }
+        return buildUploadVO(fileUrl, originalName, file.getSize(), file.getContentType());
     }
 
     @Override
@@ -89,94 +73,87 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
 
     @Override
     public FileUploadVO uploadBytes(byte[] bytes, String fileName, String contentType, String directory) {
+        Path filePath = writeFile(bytes, directory, fileName, false);
+        String fileUrl = buildFileUrl(directory, fileName);
+
+        log.info("字节上传成功 (本地): {}", fileUrl);
+
+        return buildUploadVO(fileUrl, fileName, (long) bytes.length, contentType);
+    }
+
+    @Override
+    public FileUploadVO uploadFileWithName(MultipartFile file, String fileName, String directory) {
+        String originalName = file.getOriginalFilename();
+        String extension = getExtension(originalName);
+        String newFileName = fileName + "." + extension;
+
+        Path filePath = writeFile(file, directory, newFileName, true);
+        String fileUrl = buildFileUrl(directory, newFileName);
+
+        log.info("文件上传成功 (覆盖模式): {}", fileUrl);
+
+        return buildUploadVO(fileUrl, originalName, file.getSize(), file.getContentType());
+    }
+
+    @Override
+    public FileUploadVO uploadBytesWithName(byte[] bytes, String fileName, String extension, String contentType, String directory) {
+        String newFileName = fileName + "." + extension;
+
+        Path filePath = writeFile(bytes, directory, newFileName, true);
+        String fileUrl = buildFileUrl(directory, newFileName);
+
+        log.info("字节上传成功 (覆盖模式): {}", fileUrl);
+
+        return buildUploadVO(fileUrl, newFileName, (long) bytes.length, contentType);
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    private Path writeFile(MultipartFile file, String directory, String fileName, boolean overwrite) {
         try {
             Path dirPath = Paths.get(getStoragePath(), directory);
             Files.createDirectories(dirPath);
 
             Path filePath = dirPath.resolve(fileName);
-            Files.write(filePath, bytes);
-
-            String fileUrl = getUrlPrefix() + "/" + directory + "/" + fileName;
-
-            log.info("字节上传成功 (本地): {}", fileUrl);
-
-            return FileUploadVO.builder()
-                    .url(fileUrl)
-                    .originalName(fileName)
-                    .size((long) bytes.length)
-                    .contentType(contentType)
-                    .build();
-        } catch (IOException e) {
-            log.error("字节上传失败", e);
-            throw new RuntimeException("字节上传失败: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public FileUploadVO uploadFileWithName(MultipartFile file, String fileName, String directory) {
-        try {
-            String originalName = file.getOriginalFilename();
-            String extension = getExtension(originalName);
-            String newFileName = fileName + "." + extension;
-
-            // 构建存储路径
-            Path dirPath = Paths.get(getStoragePath(), directory);
-            Files.createDirectories(dirPath);
-
-            Path filePath = dirPath.resolve(newFileName);
-
-            // 如果文件已存在，先删除（覆盖）
-            Files.deleteIfExists(filePath);
-
-            // 写入新文件
+            if (overwrite) {
+                Files.deleteIfExists(filePath);
+            }
             Files.write(filePath, file.getBytes());
-
-            String fileUrl = getUrlPrefix() + "/" + directory + "/" + newFileName;
-
-            log.info("文件上传成功 (覆盖模式): {}", fileUrl);
-
-            return FileUploadVO.builder()
-                    .url(fileUrl)
-                    .originalName(originalName)
-                    .size(file.getSize())
-                    .contentType(file.getContentType())
-                    .build();
+            return filePath;
         } catch (IOException e) {
-            log.error("文件上传失败", e);
-            throw new RuntimeException("文件上传失败: " + e.getMessage());
+            log.error("文件写入失败", e);
+            throw new RuntimeException("文件写入失败: " + e.getMessage());
         }
     }
 
-    @Override
-    public FileUploadVO uploadBytesWithName(byte[] bytes, String fileName, String extension, String contentType, String directory) {
+    private Path writeFile(byte[] bytes, String directory, String fileName, boolean overwrite) {
         try {
-            String newFileName = fileName + "." + extension;
-
             Path dirPath = Paths.get(getStoragePath(), directory);
             Files.createDirectories(dirPath);
 
-            Path filePath = dirPath.resolve(newFileName);
-
-            // 如果文件已存在，先删除（覆盖）
-            Files.deleteIfExists(filePath);
-
-            // 写入新文件
+            Path filePath = dirPath.resolve(fileName);
+            if (overwrite) {
+                Files.deleteIfExists(filePath);
+            }
             Files.write(filePath, bytes);
-
-            String fileUrl = getUrlPrefix() + "/" + directory + "/" + newFileName;
-
-            log.info("字节上传成功 (覆盖模式): {}", fileUrl);
-
-            return FileUploadVO.builder()
-                    .url(fileUrl)
-                    .originalName(newFileName)
-                    .size((long) bytes.length)
-                    .contentType(contentType)
-                    .build();
+            return filePath;
         } catch (IOException e) {
-            log.error("字节上传失败", e);
-            throw new RuntimeException("字节上传失败: " + e.getMessage());
+            log.error("文件写入失败", e);
+            throw new RuntimeException("文件写入失败: " + e.getMessage());
         }
+    }
+
+    private String buildFileUrl(String directory, String fileName) {
+        return getUrlPrefix() + "/" + directory + "/" + fileName;
+    }
+
+    private FileUploadVO buildUploadVO(String fileUrl, String originalName, long size, String contentType) {
+        return FileUploadVO.builder()
+                .url(fileUrl)
+                .originalName(originalName)
+                .size(size)
+                .contentType(contentType)
+                .build();
     }
 
     private String getExtension(String filename) {

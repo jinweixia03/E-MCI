@@ -1,12 +1,14 @@
 package com.alian.emci.vo.repair;
 
+import com.alian.emci.vo.BaseVO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,14 +17,14 @@ import java.time.LocalDateTime;
  * 维修记录VO
  */
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Schema(description = "维修记录信息")
-public class RepairVO {
+public class RepairVO extends BaseVO {
 
-    @Schema(description = "主键ID")
-    private Long id;
+    private static final long serialVersionUID = 1L;
 
     @Schema(description = "关联检测记录ID")
     @JsonProperty("repairId")
@@ -38,7 +40,7 @@ public class RepairVO {
     @JsonProperty("principal")
     private String repairUserName;
 
-    @Schema(description = "状态：0-待维修, 1-维修中, 2-已完成")
+    @Schema(description = "状态：0-待维修, 1-维修中, 2-待确认, 3-已完成")
     private Integer status;
 
     @Schema(description = "状态文本")
@@ -72,14 +74,6 @@ public class RepairVO {
 
     @Schema(description = "备注")
     private String remark;
-
-    @Schema(description = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
-
-    @Schema(description = "更新时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
 
     // ========== 检测记录相关信息 ==========
 

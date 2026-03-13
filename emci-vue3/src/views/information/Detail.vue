@@ -228,9 +228,6 @@ const pageSize = ref(10)
 const detailVisible = ref(false)
 const currentDetection = ref<Detection | null>(null)
 
-// 默认图片
-const defaultImage = 'https://via.placeholder.com/400x400?text=No+Image'
-
 // 状态类型
 const statusType = computed(() => {
   const status = manholeInfo.value?.status

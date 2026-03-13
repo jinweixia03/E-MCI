@@ -1,6 +1,8 @@
 package com.alian.emci.service.impl;
 
 import com.alian.emci.common.Result;
+import com.alian.emci.common.constant.ManholeConstant;
+import com.alian.emci.common.util.MathUtils;
 import com.alian.emci.entity.Detection;
 import com.alian.emci.entity.Manhole;
 import com.alian.emci.mapper.DetectionMapper;
@@ -28,36 +30,6 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final ManholeMapper manholeMapper;
     private final DetectionMapper detectionMapper;
-
-    // 井盖类型映射
-    private static final Map<Integer, String> MANHOLE_TYPE_MAP = new HashMap<>() {{
-        put(1, "雨水");
-        put(2, "污水");
-        put(3, "电力");
-        put(4, "通信");
-        put(5, "燃气");
-    }};
-
-    // 状态映射 (0-正常, 1-损坏, 2-维修中)
-    private static final Map<Integer, String> STATUS_MAP = new HashMap<>() {{
-        put(0, "正常");
-        put(1, "损坏");
-        put(2, "维修中");
-    }};
-
-    // 缺陷类型映射
-    private static final Map<String, String> DEFECT_TYPE_MAP = new HashMap<>() {{
-        put("crack", "裂缝");
-        put("wear", "磨损");
-        put("deformation", "变形");
-        put("missing", "缺失");
-        put("displacement", "位移");
-        put("corrosion", "腐蚀");
-        put("破损", "破损");
-        put("下沉", "下沉");
-        put("缺失", "缺失");
-        put("松动", "松动");
-    }};
 
     @Override
     public Result<DashboardStatsVO> getStats() {
@@ -94,9 +66,9 @@ public class DashboardServiceImpl implements DashboardService {
                 .normalCount(normalCount)
                 .damagedCount(damagedCount)
                 .repairingCount(repairingCount)
-                .normalRate(totalCount > 0 ? round((double) normalCount / totalCount * 100, 2) : 0.0)
+                .normalRate(MathUtils.calculatePercentage(normalCount, totalCount, 2))
                 .defectCount(defectCount)
-                .defectRate(totalCount > 0 ? round((double) defectCount / totalCount * 100, 2) : 0.0)
+                .defectRate(MathUtils.calculatePercentage(defectCount, totalCount, 2))
                 .build();
     }
 
@@ -174,7 +146,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .inProgressCount(repairingCount)
                 .completedCount(completedCount)
                 .totalCount(totalCount)
-                .completionRate(totalCount > 0 ? round((double) completedCount / totalCount * 100, 2) : 0.0)
+                .completionRate(MathUtils.calculatePercentage(completedCount, totalCount, 2))
                 .build();
     }
 
@@ -222,9 +194,9 @@ public class DashboardServiceImpl implements DashboardService {
         return defectCounts.entrySet().stream()
                 .map(e -> DashboardStatsVO.DefectTypeStat.builder()
                         .type(e.getKey())
-                        .name(DEFECT_TYPE_MAP.getOrDefault(e.getKey(), e.getKey()))
+                        .name(ManholeConstant.getDefectTypeName(e.getKey()))
                         .count(e.getValue())
-                        .percentage(total > 0 ? round((double) e.getValue() / total * 100, 2) : 0.0)
+                        .percentage(MathUtils.calculatePercentage(e.getValue(), total, 2))
                         .build())
                 .sorted((a, b) -> Long.compare(b.getCount(), a.getCount()))
                 .limit(6)
@@ -245,9 +217,9 @@ public class DashboardServiceImpl implements DashboardService {
         return typeCount.entrySet().stream()
                 .map(e -> DashboardStatsVO.TypeStat.builder()
                         .type(e.getKey())
-                        .name(MANHOLE_TYPE_MAP.getOrDefault(e.getKey(), "未知"))
+                        .name(ManholeConstant.getManholeTypeName(e.getKey()))
                         .count(e.getValue())
-                        .percentage(total > 0 ? round((double) e.getValue() / total * 100, 2) : 0.0)
+                        .percentage(MathUtils.calculatePercentage(e.getValue(), total, 2))
                         .build())
                 .sorted((a, b) -> Long.compare(b.getCount(), a.getCount()))
                 .collect(Collectors.toList());
@@ -266,15 +238,15 @@ public class DashboardServiceImpl implements DashboardService {
         return Arrays.asList(
                 DashboardStatsVO.StatusStat.builder()
                         .status(0).name("正常").count(normal)
-                        .percentage(total > 0 ? round((double) normal / total * 100, 2) : 0.0)
+                        .percentage(MathUtils.calculatePercentage(normal, total, 2))
                         .build(),
                 DashboardStatsVO.StatusStat.builder()
                         .status(1).name("损坏").count(damaged)
-                        .percentage(total > 0 ? round((double) damaged / total * 100, 2) : 0.0)
+                        .percentage(MathUtils.calculatePercentage(damaged, total, 2))
                         .build(),
                 DashboardStatsVO.StatusStat.builder()
                         .status(2).name("维修中").count(repairing)
-                        .percentage(total > 0 ? round((double) repairing / total * 100, 2) : 0.0)
+                        .percentage(MathUtils.calculatePercentage(repairing, total, 2))
                         .build()
         );
     }
@@ -328,7 +300,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .map(e -> DashboardStatsVO.CityStat.builder()
                         .city(e.getKey())
                         .count(e.getValue())
-                        .percentage(total > 0 ? round((double) e.getValue() / total * 100, 2) : 0.0)
+                        .percentage(MathUtils.calculatePercentage(e.getValue(), total, 2))
                         .build())
                 .sorted((a, b) -> Long.compare(b.getCount(), a.getCount()))
                 .limit(5)
@@ -379,38 +351,17 @@ public class DashboardServiceImpl implements DashboardService {
         );
 
         return manholes.stream().map(m -> {
-            int level;
-            String levelName;
             double score = m.getSafetyScore() != null ? m.getSafetyScore() : 100;
-
-            if (score >= 90) {
-                level = 1;
-                levelName = "优秀";
-            } else if (score >= 80) {
-                level = 2;
-                levelName = "良好";
-            } else if (score >= 60) {
-                level = 3;
-                levelName = "一般";
-            } else {
-                level = 4;
-                levelName = "差";
-            }
+            MathUtils.SafetyLevel safetyLevel = MathUtils.calculateSafetyLevel(score);
 
             return DashboardStatsVO.SafetyRank.builder()
                     .manholeId(m.getManholeId())
                     .address(m.getAddress())
                     .score(score)
-                    .level(level)
-                    .levelName(levelName)
+                    .level(safetyLevel.level())
+                    .levelName(safetyLevel.name())
                     .build();
         }).collect(Collectors.toList());
     }
 
-    /**
-     * 四舍五入
-     */
-    private double round(double value, int places) {
-        return Math.round(value * Math.pow(10, places)) / Math.pow(10, places);
-    }
 }
