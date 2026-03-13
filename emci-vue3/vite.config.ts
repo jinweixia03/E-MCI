@@ -29,12 +29,19 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8086',
+        target: 'http://localhost:8087',
         changeOrigin: true
       },
       '/uploads': {
-        target: 'http://localhost:8086',
+        target: 'http://localhost:8087',
         changeOrigin: true
+      }
+    }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler'
       }
     }
   },

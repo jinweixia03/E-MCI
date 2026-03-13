@@ -9,7 +9,7 @@ REM 设置变量
 set "BACKEND_DIR=D:\1_Source\XFCode\emic\emci-new"
 set "FRONTEND_DIR=D:\1_Source\XFCode\emic\emci-vue3"
 set "MAVEN_CMD=D:\Environments\maven\apache-maven-3.9.10\bin\mvn.cmd"
-set "BACKEND_PORT=8086"
+set "BACKEND_PORT=8087"
 set "FRONTEND_PORT=5173"
 
 REM ========== 检查环境 ==========
