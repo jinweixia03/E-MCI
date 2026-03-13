@@ -75,34 +75,6 @@
         </div>
 
         <div class="header-right">
-          <!-- 搜索框 -->
-          <div class="header-search">
-            <el-input
-              v-model="searchKeyword"
-              placeholder="快速搜索..."
-              prefix-icon="Search"
-              size="small"
-              clearable
-              class="search-input"
-            />
-          </div>
-
-          <!-- 通知 -->
-          <el-badge :value="3" class="notice-badge" type="danger">
-            <el-icon :size="20" class="header-icon"><Bell /></el-icon>
-          </el-badge>
-
-          <!-- 全屏 -->
-          <el-icon :size="20" class="header-icon" @click="toggleFullscreen">
-            <FullScreen />
-          </el-icon>
-
-          <!-- 主题切换 -->
-          <el-icon :size="20" class="header-icon" @click="toggleTheme">
-            <Sunny v-if="isDark" />
-            <Moon v-else />
-          </el-icon>
-
           <!-- 用户下拉 -->
           <el-dropdown @command="handleCommand" trigger="click">
             <div class="user-info">
@@ -132,9 +104,6 @@
                 </div>
                 <el-dropdown-item divided command="profile">
                   <el-icon><User /></el-icon>个人中心
-                </el-dropdown-item>
-                <el-dropdown-item command="settings">
-                  <el-icon><Setting /></el-icon>系统设置
                 </el-dropdown-item>
                 <el-dropdown-item divided command="logout">
                   <el-icon><SwitchButton /></el-icon>退出登录
@@ -186,17 +155,11 @@ import {
   Monitor,
   HomeFilled,
   ArrowDown,
-  Bell,
-  FullScreen,
-  Sunny,
-  Moon,
   User,
-  Setting,
   SwitchButton,
   Close,
   Fold,
-  Expand,
-  Search
+  Expand
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -214,25 +177,6 @@ const isScrolled = ref(false)
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 10
 }
-
-// 暗黑模式
-const isDark = ref(false)
-const toggleTheme = () => {
-  isDark.value = !isDark.value
-  document.documentElement.setAttribute('data-theme', isDark.value ? 'dark' : 'light')
-}
-
-// 全屏
-const toggleFullscreen = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen()
-  } else {
-    document.exitFullscreen()
-  }
-}
-
-// 搜索
-const searchKeyword = ref('')
 
 // 用户类型
 const userType = computed(() => userStore.userInfo?.type ?? 0)
@@ -299,9 +243,6 @@ const handleCommand = (command: string) => {
       router.push('/login')
       break
     case 'profile':
-      router.push('/settings')
-      break
-    case 'settings':
       router.push('/settings')
       break
   }
@@ -619,37 +560,6 @@ onUnmounted(() => {
     align-items: center;
     gap: 20px;
 
-    .header-search {
-      .search-input {
-        width: 240px;
-        transition: width 0.3s ease;
-
-        &:focus-within {
-          width: 300px;
-        }
-      }
-    }
-
-    .header-icon {
-      color: var(--text-secondary);
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-
-      &:hover {
-        color: var(--primary-color);
-        background: rgba(64, 158, 255, 0.1);
-        transform: scale(1.1);
-      }
-    }
-
-    .notice-badge {
-      :deep(.el-badge__content) {
-        border: none;
-      }
-    }
-
     .user-info {
       display: flex;
       align-items: center;
@@ -852,10 +762,6 @@ onUnmounted(() => {
 
   .header {
     padding: 0 16px;
-
-    .header-search {
-      display: none;
-    }
   }
 
   .tags-view {
