@@ -333,7 +333,22 @@ USE emci;
 source emci.sql;
 ```
 
-#### Step 2: Redis 配置
+#### Step 2: 下载上传文件数据
+
+> ⚠️ **注意**：源码包中不包含用户上传的图片文件。如需查看检测图片等数据，请下载以下网盘文件：
+
+📦 **百度网盘下载**
+- 🔗 链接：https://pan.baidu.com/s/1VF-rkBomUxj_D44Qelxwkw
+- 🔑 提取码：`1121`
+- 📁 内容：`emci-new/uploads/` 目录下的所有上传文件
+
+下载后解压到项目目录：
+```bash
+# 解压到后端项目 uploads 目录
+unzip 网盘下载的文件.zip -d emci-new/uploads/
+```
+
+#### Step 3: Redis 配置
 
 ```bash
 # 启动 Redis 服务
@@ -343,7 +358,7 @@ redis-server
 net start redis
 ```
 
-#### Step 3: 后端配置与启动
+#### Step 4: 后端配置与启动
 
 ```bash
 # 进入后端目录
@@ -394,7 +409,7 @@ Started EmciApplication in x.x seconds
 Tomcat started on port(s): 8087
 ```
 
-#### Step 4: 前端配置与启动
+#### Step 5: 前端配置与启动
 
 ```bash
 # 进入前端目录
