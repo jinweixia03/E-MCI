@@ -2,6 +2,7 @@
 target/
 build/
 dist/
+*.class
 
 # 依赖
 node_modules/
@@ -19,17 +20,42 @@ logs/
 *.tmp
 *.temp
 .DS_Store
+*.pid
+*.seed
+*.pid.lock
 
-# 上传文件
-uploads/detections/
-uploads/manholes/
-uploads/repair/
+# 上传文件（动态生成的文件不应该提交）
+emci-new/uploads/
+!emci-new/uploads/.gitkeep
+
+# AI模型文件（大文件，应该单独管理）
+emci-new/models/*.onnx
+emci-new/models/*.pt
+
+# Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
 
 # 环境配置
 .env
 .env.local
+.env.*.local
+
+# 测试报告
+coverage/
+.nyc_output/
+
+# 操作系统文件
+Thumbs.db
+Desktop.ini
 
 # 其他
-*.class
 *.jar
 *.war
+*.ear
