@@ -55,6 +55,9 @@ coverage/
 Thumbs.db
 Desktop.ini
 
+# Claude
+.claude/
+
 # 其他
 *.jar
 *.war
