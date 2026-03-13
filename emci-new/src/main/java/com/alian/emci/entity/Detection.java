@@ -1,0 +1,103 @@
+package com.alian.emci.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
+
+/**
+ * 检测记录实体
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("detection")
+@Schema(description = "检测记录实体")
+public class Detection extends BaseEntity {
+
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "关联井盖编号")
+    private String manholeId;
+
+    @Schema(description = "检测编号")
+    @TableField("detection_no")
+    private String detectionNo;
+
+    @Schema(description = "检测时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime detectionTime;
+
+    @Schema(description = "检测状态：0-失败，1-成功")
+    @TableField(exist = false)
+    private Integer detectionStatus;
+
+    @Schema(description = "检测图片URL（带标注结果）")
+    @TableField("img_url")
+    private String imgUrl;
+
+    @Schema(description = "原始图片URL（内存计算）")
+    @TableField(exist = false)
+    private String originalImgUrl;
+
+    @Schema(description = "检测结果图片URL（内存计算）")
+    @TableField(exist = false)
+    private String resultImgUrl;
+
+    @Schema(description = "是否有缺陷：0-无，1-有")
+    private Integer hasDefect;
+
+    @Schema(description = "缺陷总数")
+    private Integer defectCount;
+
+    @Schema(description = "缺陷类型列表")
+    private String defectTypes;
+
+    @Schema(description = "使用的模型版本")
+    @TableField(exist = false)
+    private String modelVersion;
+
+    @Schema(description = "置信度阈值")
+    @TableField(exist = false)
+    private Double confThreshold;
+
+    @Schema(description = "IoU阈值")
+    @TableField(exist = false)
+    private Double iouThreshold;
+
+    @Schema(description = "处理耗时（毫秒）")
+    @TableField(exist = false)
+    private Integer processTimeMs;
+
+    @Schema(description = "主要缺陷类型")
+    @TableField(exist = false)
+    private String primaryDefectType;
+
+    @Schema(description = "最高置信度")
+    @TableField(exist = false)
+    private Double primaryConfidence;
+
+    @Schema(description = "是否已修复：0-未修复，1-已修复")
+    @TableField(exist = false)
+    private Integer isRepaired;
+
+    @Schema(description = "修复时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField(exist = false)
+    private LocalDateTime repairedTime;
+
+    @Schema(description = "修复人ID")
+    @TableField(exist = false)
+    private Long repairedBy;
+
+    @Schema(description = "修复备注")
+    @TableField(exist = false)
+    private String repairRemark;
+
+    @Schema(description = "完整检测结果JSON")
+    @TableField(exist = false)
+    private String resultJson;
+}

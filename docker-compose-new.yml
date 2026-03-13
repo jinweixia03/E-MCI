@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: emci-mysql-new
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-031121}
+      MYSQL_DATABASE: emci
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./emci-new/src/main/resources/sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    networks:
+      - emci-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-031121}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: emci-redis-new
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - emci-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # 后端服务
+  backend:
+    build:
+      context: ./emci-new
+      dockerfile: Dockerfile
+    container_name: emci-backend-new
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_HOST: mysql
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-031121}
+      REDIS_HOST: redis
+      APP_JWT_SECRET: ${JWT_SECRET:-your-256-bit-secret-change-in-production}
+      APP_COS_SECRET_ID: ${COS_SECRET_ID:-}
+      APP_COS_SECRET_KEY: ${COS_SECRET_KEY:-}
+    ports:
+      - "8085:8085"
+    networks:
+      - emci-network
+    restart: unless-stopped
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./emci-vue3
+      dockerfile: Dockerfile
+    container_name: emci-frontend-new
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - emci-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  emci-network:
+    driver: bridge

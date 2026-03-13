@@ -1,0 +1,64 @@
+package com.alian.emci.dto.detection;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+/**
+ * 检测记录创建请求
+ */
+@Data
+@Schema(description = "检测记录创建请求")
+public class DetectionCreateRequest {
+
+    @Schema(description = "关联井盖编号", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "井盖编号不能为空")
+    private String manholeId;
+
+    @Schema(description = "检测编号")
+    private String detectionNo;
+
+    @Schema(description = "检测时间")
+    private LocalDateTime detectionTime;
+
+    @Schema(description = "检测状态：0-失败，1-成功")
+    private Integer detectionStatus;
+
+    @Schema(description = "原始图片URL")
+    private String originalImgUrl;
+
+    @Schema(description = "检测结果图片URL")
+    private String resultImgUrl;
+
+    @Schema(description = "是否有缺陷：0-无，1-有")
+    private Integer hasDefect;
+
+    @Schema(description = "缺陷总数")
+    private Integer defectCount;
+
+    @Schema(description = "缺陷类型列表")
+    private String defectTypes;
+
+    @Schema(description = "使用的模型版本")
+    private String modelVersion;
+
+    @Schema(description = "置信度阈值")
+    private Double confThreshold;
+
+    @Schema(description = "IoU阈值")
+    private Double iouThreshold;
+
+    @Schema(description = "处理耗时（毫秒）")
+    private Integer processTimeMs;
+
+    @Schema(description = "主要缺陷类型")
+    private String primaryDefectType;
+
+    @Schema(description = "最高置信度")
+    private Double primaryConfidence;
+
+    @Schema(description = "完整检测结果JSON")
+    private String resultJson;
+}

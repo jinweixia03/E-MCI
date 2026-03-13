@@ -1,0 +1,172 @@
+:root {
+  /* ========== 主色调 ========== */
+  --primary-color: #409eff;
+  --primary-light: #67c23a;
+  --primary-dark: #2c3e50;
+
+  /* ========== 渐变色 ========== */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-blue: linear-gradient(135deg, #0076f0 0%, #00c6ff 100%);
+  --gradient-success: linear-gradient(135deg, #42b883 0%, #347474 100%);
+  --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+
+  /* ========== 背景色 ========== */
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #ffffff;
+  --bg-sidebar: #1a1a2e;
+  --bg-header: #ffffff;
+
+  /* ========== 文字颜色 ========== */
+  --text-primary: #2c3e50;
+  --text-secondary: #606266;
+  --text-muted: #909399;
+  --text-white: #ffffff;
+
+  /* ========== 边框颜色 ========== */
+  --border-color: #e4e7ed;
+  --border-light: #ebeef5;
+
+  /* ========== 阴影 ========== */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.15);
+
+  /* ========== 圆角 ========== */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* ========== 过渡 ========== */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* ========== 布局尺寸 ========== */
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 120px;
+  --header-height: 70px;
+  --tags-height: 48px;
+
+  /* ========== 字体 ========== */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* ============================================
+   * 响应式布局系统 - 统一规范
+   * ============================================ */
+
+  /* 页面容器 */
+  --page-max-width: 1600px;
+  --page-padding-x: 32px;
+  --page-padding-y: 24px;
+  --page-gap: 24px;
+
+  /* 卡片间距 */
+  --card-gap: 20px;
+  --card-padding: 20px;
+  --card-border-radius: 16px;
+  --card-border-radius-sm: 12px;
+
+  /* 统计卡片 */
+  --stat-icon-size: 44px;
+  --stat-icon-radius: 10px;
+  --stat-value-size: 22px;
+  --stat-label-size: 13px;
+
+  /* 页面头部 */
+  --header-title-icon-size: 48px;
+  --header-title-size: 24px;
+  --header-subtitle-size: 14px;
+
+  /* 表格 */
+  --table-header-height: 56px;
+  --table-row-height: 52px;
+
+  /* 表单 */
+  --form-item-gap: 20px;
+  --form-label-width: 100px;
+}
+
+/* ========== 深色模式变量 ========== */
+[data-theme='dark'] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-sidebar: #0f172a;
+  --bg-header: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --border-light: #1e293b;
+}
+
+/* ========== 响应式断点 mixin 变量 (用于 SCSS) ========== */
+$breakpoints: (
+  'xs': 480px,    // 超小屏幕 (手机)
+  'sm': 768px,    // 小屏幕 (平板)
+  'md': 992px,    // 中等屏幕 (小型桌面)
+  'lg': 1200px,   // 大屏幕 (桌面)
+  'xl': 1440px,   // 超大屏幕
+  'xxl': 1920px   // 超宽屏幕
+);
+
+/* ========== 响应式字体大小 ========== */
+:root {
+  /* 大屏默认值 */
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --page-padding-x: 24px;
+    --page-padding-y: 20px;
+    --page-gap: 20px;
+    --card-gap: 16px;
+    --header-title-size: 22px;
+  }
+}
+
+@media (max-width: 992px) {
+  :root {
+    --page-padding-x: 20px;
+    --page-padding-y: 16px;
+    --page-gap: 16px;
+    --card-gap: 12px;
+    --header-title-size: 20px;
+    --header-title-icon-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-padding-x: 16px;
+    --page-padding-y: 12px;
+    --page-gap: 12px;
+    --card-gap: 10px;
+    --card-padding: 16px;
+    --header-title-size: 18px;
+    --header-title-icon-size: 36px;
+    --stat-icon-size: 36px;
+    --stat-value-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-padding-x: 12px;
+    --page-padding-y: 10px;
+    --page-gap: 10px;
+    --card-gap: 8px;
+    --card-padding: 12px;
+  }
+}
