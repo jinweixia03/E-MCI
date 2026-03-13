@@ -1,5 +1,5 @@
 server:
-  port: 8086
+  port: 8087
   servlet:
     context-path: /api
     encoding:
@@ -14,7 +14,7 @@ spring:
   # MySQL 数据库配置（默认）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/emci?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/emci?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&createDatabaseIfNotExist=true
     username: root
     password: 123456
     hikari:
