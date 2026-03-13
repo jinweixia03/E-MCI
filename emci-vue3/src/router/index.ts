@@ -90,19 +90,7 @@ const routes: RouteRecordRaw[] = [
         path: 'settings',
         name: 'Settings',
         component: () => import('@/views/settings/index.vue'),
-        meta: { title: '系统设置', icon: 'Setting' } as RouteMeta
-      },
-      {
-        path: 'information',
-        name: 'Information',
-        component: () => import('@/views/information/index.vue'),
-        meta: { title: '信息管理', icon: 'Document', roles: [0, 1] } as RouteMeta
-      },
-      {
-        path: 'information/detail/:id',
-        name: 'InformationDetail',
-        component: () => import('@/views/information/Detail.vue'),
-        meta: { title: '井盖详情', hidden: true } as RouteMeta
+        meta: { title: '用户中心', icon: 'UserFilled' } as RouteMeta
       }
     ]
   },

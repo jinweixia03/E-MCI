@@ -1,35 +1,52 @@
 <template>
   <div class="app-container">
-    <el-card class="setting-box">
-      <div class="setting-info">
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="">
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
-        <el-row class="info">
-          <el-col class="user-info" :span="24">用户名：{{ username }}</el-col>
-          <el-col class="user-info" :span="24">手机号：{{ mobile }}</el-col>
-        </el-row>
+    <h2 class="page-title">用户中心</h2>
+    <el-card class="user-center-card">
+      <div class="user-profile">
+        <div class="avatar-section">
+          <div class="avatar-default">
+            <el-icon><User /></el-icon>
+          </div>
+        </div>
+        <div class="info-section">
+          <div class="info-item">
+            <span class="info-label">用户名</span>
+            <span class="info-value">{{ username }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">手机号</span>
+            <span class="info-value">{{ mobile }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">用户类型</span>
+            <el-tag :type="userTypeTagType">{{ userTypeText }}</el-tag>
+          </div>
+        </div>
       </div>
-      <div class="setting-btn">
-        <el-button class="setting-btn-update" type="primary" @click="updatePassword">修改密码</el-button>
-        <el-button type="danger" @click="logout">退出登录</el-button>
-      </div>
-      <UpdateInfo v-model:dialog-visible="dialogVisible" @handleClose="handleClose" />
     </el-card>
+
+    <el-card class="action-card">
+      <template #header>
+        <span>账户操作</span>
+      </template>
+      <div class="action-buttons">
+        <el-button type="primary" @click="updatePassword">
+          <el-icon><Lock /></el-icon> 修改密码
+        </el-button>
+        <el-button type="danger" @click="logout">
+          <el-icon><SwitchButton /></el-icon> 退出登录
+        </el-button>
+      </div>
+    </el-card>
+
+    <UpdateInfo v-model:dialog-visible="dialogVisible" @handleClose="handleClose" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus } from '@element-plus/icons-vue'
+import { User, Lock, SwitchButton } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { authApi } from '@/api/auth'
@@ -38,11 +55,25 @@ import UpdateInfo from './UpdateInfo.vue'
 const router = useRouter()
 const userStore = useUserStore()
 
-const imageUrl = ref('')
-const loading = ref(false)
-
 const username = computed(() => userStore.userInfo?.username || '未登录')
 const mobile = computed(() => userStore.userInfo?.phone || '未绑定')
+
+// 用户类型映射
+const userTypeText = computed(() => {
+  const type = userStore.userInfo?.type
+  const typeMap: Record<number, string> = { 0: '普通用户', 1: '管理员', 2: '维修员' }
+  return typeMap[type ?? 0] || '普通用户'
+})
+
+const userTypeTagType = computed(() => {
+  const type = userStore.userInfo?.type
+  const tagMap: Record<number, '' | 'success' | 'warning' | 'danger'> = {
+    0: '',
+    1: 'success',
+    2: 'warning'
+  }
+  return tagMap[type ?? 0] || ''
+})
 
 // 获取当前用户信息
 const fetchUserInfo = async () => {
@@ -50,9 +81,6 @@ const fetchUserInfo = async () => {
     const res = await authApi.getCurrentUser()
     if (res.code === 200) {
       userStore.setUserInfo(res.data)
-      if (res.data.headImg) {
-        imageUrl.value = res.data.headImg
-      }
     }
   } catch (error) {
     console.error('获取用户信息失败:', error)
@@ -77,89 +105,86 @@ const logout = () => {
   ElMessage.success('已退出登录')
   router.push('/login')
 }
-
-const handleAvatarSuccess = (res: any, file: File) => {
-  imageUrl.value = URL.createObjectURL(file)
-}
-
-const beforeAvatarUpload = (file: File) => {
-  const isJPG = file.type === 'image/jpeg'
-  const isLt2M = file.size / 1024 / 1024 < 2
-
-  if (!isLt2M) {
-    ElMessage.error('上传头像图片大小不能超过 2MB!')
-  }
-  return isJPG && isLt2M
-}
 </script>
 
 <style lang="scss" scoped>
 .app-container {
-  height: calc(100vh - 84px);
+  padding: 20px;
+  min-height: calc(100vh - 84px);
+  background-color: #f5f7fa;
 }
 
-.setting-box {
-  padding-top: 10vh;
-  display: flex;
-  align-content: center;
-  flex-direction: column;
-  height: 100%;
+.page-title {
+  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #303133;
+}
 
-  .setting-info {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    justify-content: center;
+.user-center-card {
+  margin-bottom: 20px;
+
+  .user-profile {
+    display: flex;
     align-items: center;
+    gap: 40px;
+    padding: 20px;
   }
 
-  .avatar-uploader {
-    margin: 0 auto;
-  }
-
-  .info {
-    position: relative;
-    top: -32px
-  }
-
-  .user-info {
-    color: #1f2d3d;
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 80px;
-    height: 80px;
-  }
-
-  .setting-btn {
-    width: 100%;
+  .avatar-section {
     text-align: center;
-    margin: 10vh auto 0;
+  }
 
-    .setting-btn-update {
-      margin-right: 10vw
+  .avatar-default {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .info-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .info-label {
+      width: 80px;
+      color: #606266;
+      font-size: 14px;
+    }
+
+    .info-value {
+      color: #303133;
+      font-size: 16px;
+      font-weight: 500;
     }
   }
 }
 
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 240px;
-  height: 240px;
-  line-height: 240px;
-  text-align: center;
-  border: 1px dashed #d9d9d9;
-  border-radius: 50%;
-  cursor: pointer;
+.action-card {
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
 
-  &:hover {
-    border-color: #409EFF;
+    .el-button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
   }
-}
-
-.avatar {
-  width: 240px;
-  height: 240px;
-  display: block;
-  border-radius: 50%;
 }
 </style>
