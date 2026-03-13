@@ -3,6 +3,8 @@ package com.alian.emci.service.impl;
 import com.alian.emci.common.PageResult;
 import com.alian.emci.common.Result;
 import com.alian.emci.common.ResultCode;
+import com.alian.emci.common.constant.ManholeConstant;
+import com.alian.emci.common.util.MathUtils;
 import com.alian.emci.dto.manhole.ManholeCreateRequest;
 import com.alian.emci.dto.manhole.ManholeMapQueryRequest;
 import com.alian.emci.dto.manhole.ManholeQueryRequest;
@@ -22,18 +24,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.beans.FeatureDescriptor;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 井盖服务实现
@@ -45,22 +41,6 @@ public class ManholeServiceImpl implements ManholeService {
 
     private final ManholeMapper manholeMapper;
     private final DetectionMapper detectionMapper;
-
-    // 井盖类型映射
-    private static final Map<Integer, String> MANHOLE_TYPE_MAP = new HashMap<>() {{
-        put(1, "雨水");
-        put(2, "污水");
-        put(3, "电力");
-        put(4, "通信");
-        put(5, "燃气");
-    }};
-
-    // 井盖状态映射 (与H2 Schema保持一致: 0-正常, 1-异常/损坏, 2-维修中)
-    private static final Map<Integer, String> STATUS_MAP = new HashMap<>() {{
-        put(0, "正常");
-        put(1, "损坏");
-        put(2, "维修中");
-    }};
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -88,7 +68,7 @@ public class ManholeServiceImpl implements ManholeService {
         }
 
         // 只复制非null属性
-        copyNonNullProperties(request, manhole);
+        com.alian.emci.common.util.BeanUtils.copyNonNullProperties(request, manhole);
         manholeMapper.updateById(manhole);
 
         log.info("更新井盖: {}", manhole.getManholeId());
@@ -219,16 +199,16 @@ public class ManholeServiceImpl implements ManholeService {
         List<ManholeMapStatsVO.TypeStat> typeDistribution = typeCountMap.entrySet().stream()
                 .map(e -> ManholeMapStatsVO.TypeStat.builder()
                         .type(e.getKey())
-                        .name(MANHOLE_TYPE_MAP.getOrDefault(e.getKey(), "未知"))
+                        .name(ManholeConstant.MANHOLE_TYPE_MAP.getOrDefault(e.getKey(), "未知"))
                         .count(e.getValue())
-                        .percentage(totalCount > 0 ? round((double) e.getValue() / totalCount * 100, 2) : 0.0)
+                        .percentage(totalCount > 0 ? MathUtils.round((double) e.getValue() / totalCount * 100, 2) : 0.0)
                         .build())
-                .sorted(Comparator.comparing(ManholeMapStatsVO.TypeStat::getCount).reversed())
+                .sorted((a, b) -> Long.compare(b.getCount(), a.getCount()))
                 .collect(Collectors.toList());
 
         Map<String, Long> typeStats = typeCountMap.entrySet().stream()
                 .collect(Collectors.toMap(
-                        e -> MANHOLE_TYPE_MAP.getOrDefault(e.getKey(), "未知"),
+                        e -> ManholeConstant.MANHOLE_TYPE_MAP.getOrDefault(e.getKey(), "未知"),
                         Map.Entry::getValue
                 ));
 
@@ -236,15 +216,15 @@ public class ManholeServiceImpl implements ManholeService {
         List<ManholeMapStatsVO.StatusStat> statusDistribution = Arrays.asList(
                 ManholeMapStatsVO.StatusStat.builder()
                         .status(0).name("正常").count(normalCount)
-                        .percentage(totalCount > 0 ? round((double) normalCount / totalCount * 100, 2) : 0.0)
+                        .percentage(totalCount > 0 ? MathUtils.round((double) normalCount / totalCount * 100, 2) : 0.0)
                         .build(),
                 ManholeMapStatsVO.StatusStat.builder()
                         .status(1).name("损坏").count(damagedCount)
-                        .percentage(totalCount > 0 ? round((double) damagedCount / totalCount * 100, 2) : 0.0)
+                        .percentage(totalCount > 0 ? MathUtils.round((double) damagedCount / totalCount * 100, 2) : 0.0)
                         .build(),
                 ManholeMapStatsVO.StatusStat.builder()
                         .status(2).name("维修中").count(repairingCount)
-                        .percentage(totalCount > 0 ? round((double) repairingCount / totalCount * 100, 2) : 0.0)
+                        .percentage(totalCount > 0 ? MathUtils.round((double) repairingCount / totalCount * 100, 2) : 0.0)
                         .build()
         );
 
@@ -296,7 +276,7 @@ public class ManholeServiceImpl implements ManholeService {
         List<ManholeMapVO> result = list.stream()
                 .map(m -> {
                     ManholeMapVO vo = convertToMapVO(m);
-                    double distance = calculateDistance(longitude, latitude, m.getLongitude(), m.getLatitude());
+                    double distance = MathUtils.calculateDistance(longitude, latitude, m.getLongitude(), m.getLatitude());
                     vo.setSafetyScore(distance); // 临时借用字段存储距离
                     return vo;
                 })
@@ -350,24 +330,6 @@ public class ManholeServiceImpl implements ManholeService {
     }
 
     // ==================== 私有方法 ====================
-
-    /**
-     * 复制非null属性
-     */
-    private void copyNonNullProperties(Object source, Object target) {
-        BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
-    }
-
-    /**
-     * 获取对象中为null的属性名数组
-     */
-    private String[] getNullPropertyNames(Object source) {
-        final BeanWrapper wrappedSource = new BeanWrapperImpl(source);
-        return Stream.of(wrappedSource.getPropertyDescriptors())
-                .map(FeatureDescriptor::getName)
-                .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
-                .toArray(String[]::new);
-    }
 
     /**
      * 构建查询条件
@@ -520,28 +482,7 @@ public class ManholeServiceImpl implements ManholeService {
         return clusters;
     }
 
-    /**
-     * 计算两点间距离（米）
-     */
-    private double calculateDistance(double lng1, double lat1, double lng2, double lat2) {
-        double radLat1 = Math.toRadians(lat1);
-        double radLat2 = Math.toRadians(lat2);
-        double a = radLat1 - radLat2;
-        double b = Math.toRadians(lng1) - Math.toRadians(lng2);
-        double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
-                Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
-        s = s * 6378137; // 地球半径
-        return s;
-    }
 
-    /**
-     * 四舍五入
-     */
-    private double round(double value, int places) {
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
 
     /**
      * 转换为VO
@@ -551,14 +492,10 @@ public class ManholeServiceImpl implements ManholeService {
         BeanUtils.copyProperties(manhole, vo);
 
         // 设置状态文本
-        if (manhole.getStatus() != null) {
-            vo.setStatusText(STATUS_MAP.get(manhole.getStatus()));
-        }
+        vo.setStatusText(ManholeConstant.getStatusName(manhole.getStatus()));
 
         // 设置类型文本
-        if (manhole.getManholeType() != null) {
-            vo.setManholeTypeText(MANHOLE_TYPE_MAP.get(manhole.getManholeType()));
-        }
+        vo.setManholeTypeText(ManholeConstant.getManholeTypeName(manhole.getManholeType()));
 
         // 查询最新检测记录，获取检测图片
         if (manhole.getManholeId() != null) {
@@ -591,14 +528,10 @@ public class ManholeServiceImpl implements ManholeService {
         BeanUtils.copyProperties(manhole, vo);
 
         // 设置状态文本
-        if (manhole.getStatus() != null) {
-            vo.setStatusText(STATUS_MAP.get(manhole.getStatus()));
-        }
+        vo.setStatusText(ManholeConstant.getStatusName(manhole.getStatus()));
 
         // 设置类型文本
-        if (manhole.getManholeType() != null) {
-            vo.setManholeTypeText(MANHOLE_TYPE_MAP.get(manhole.getManholeType()));
-        }
+        vo.setManholeTypeText(ManholeConstant.getManholeTypeName(manhole.getManholeType()));
 
         // 设置检测相关信息
         vo.setHasLatestDetection(manhole.getLastDetTime() != null);

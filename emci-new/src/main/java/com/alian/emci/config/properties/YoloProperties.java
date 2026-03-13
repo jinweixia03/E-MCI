@@ -80,7 +80,8 @@ public class YoloProperties {
     public static class Script {
         /**
          * 检测脚本路径
+         * 默认使用新的统一检测脚本 detect.py
          */
-        private String path = "yolo_detect.py";
+        private String path = "detect.py";
     }
 }

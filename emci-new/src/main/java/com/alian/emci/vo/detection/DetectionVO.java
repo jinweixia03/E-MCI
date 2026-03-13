@@ -1,11 +1,13 @@
 package com.alian.emci.vo.detection;
 
+import com.alian.emci.vo.BaseVO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -13,14 +15,14 @@ import java.time.LocalDateTime;
  * 检测记录VO
  */
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Schema(description = "检测记录信息")
-public class DetectionVO {
+public class DetectionVO extends BaseVO {
 
-    @Schema(description = "主键ID")
-    private Long id;
+    private static final long serialVersionUID = 1L;
 
     @Schema(description = "关联井盖编号")
     private String manholeId;
@@ -86,12 +88,4 @@ public class DetectionVO {
 
     @Schema(description = "完整检测结果JSON")
     private String resultJson;
-
-    @Schema(description = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
-
-    @Schema(description = "更新时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
 }

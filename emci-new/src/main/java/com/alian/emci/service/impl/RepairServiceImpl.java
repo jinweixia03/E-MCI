@@ -3,6 +3,8 @@ package com.alian.emci.service.impl;
 import com.alian.emci.common.PageResult;
 import com.alian.emci.common.Result;
 import com.alian.emci.common.ResultCode;
+import com.alian.emci.common.constant.ManholeConstant;
+import com.alian.emci.common.util.StatsUtils;
 import com.alian.emci.dto.repair.RepairCreateRequest;
 import com.alian.emci.dto.repair.RepairUpdateRequest;
 import com.alian.emci.entity.Detection;
@@ -24,10 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -43,13 +43,6 @@ public class RepairServiceImpl implements RepairService {
     private final RepairMapper repairMapper;
     private final DetectionMapper detectionMapper;
     private final UserMapper userMapper;
-
-    private static final Map<Integer, String> STATUS_MAP = new HashMap<>() {{
-        put(0, "待维修");
-        put(1, "维修中");
-        put(2, "待确认");
-        put(3, "已完成");
-    }};
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -296,25 +289,8 @@ public class RepairServiceImpl implements RepairService {
                 .groupBy("status")
         );
 
-        Map<String, Long> stats = new HashMap<>();
-        // 初始化所有状态为0
-        stats.put("pending", 0L);
-        stats.put("inProgress", 0L);
-        stats.put("toConfirm", 0L);
-        stats.put("completed", 0L);
-        stats.put("total", repairMapper.selectCount(null));
-
-        // 填充统计结果
-        for (Map<String, Object> map : resultList) {
-            Integer status = (Integer) map.get("status");
-            Long count = ((Number) map.get("count")).longValue();
-            switch (status) {
-                case 0: stats.put("pending", count); break;
-                case 1: stats.put("inProgress", count); break;
-                case 2: stats.put("toConfirm", count); break;
-                case 3: stats.put("completed", count); break;
-            }
-        }
+        Map<String, Long> stats = StatsUtils.createStatusStats(repairMapper.selectCount(null));
+        StatsUtils.fillStatusStats(stats, resultList, "status", "count");
 
         return Result.success(stats);
     }
@@ -360,27 +336,10 @@ public class RepairServiceImpl implements RepairService {
                 .groupBy("status")
         );
 
-        Map<String, Long> stats = new HashMap<>();
-        // 初始化所有状态为0
-        stats.put("pending", 0L);
-        stats.put("inProgress", 0L);
-        stats.put("toConfirm", 0L);
-        stats.put("completed", 0L);
-        stats.put("total", repairMapper.selectCount(
-            new LambdaQueryWrapper<Repair>().eq(Repair::getRepairUserId, repairUserId)
-        ));
-
-        // 填充统计结果
-        for (Map<String, Object> map : resultList) {
-            Integer status = (Integer) map.get("status");
-            Long count = ((Number) map.get("count")).longValue();
-            switch (status) {
-                case 0: stats.put("pending", count); break;
-                case 1: stats.put("inProgress", count); break;
-                case 2: stats.put("toConfirm", count); break;
-                case 3: stats.put("completed", count); break;
-            }
-        }
+        Map<String, Long> stats = StatsUtils.createStatusStats(
+            repairMapper.selectCount(new LambdaQueryWrapper<Repair>().eq(Repair::getRepairUserId, repairUserId))
+        );
+        StatsUtils.fillStatusStats(stats, resultList, "status", "count");
 
         return Result.success(stats);
     }
@@ -411,9 +370,7 @@ public class RepairServiceImpl implements RepairService {
         }
 
         // 设置状态文本
-        if (repair.getStatus() != null) {
-            vo.setStatusText(STATUS_MAP.get(repair.getStatus()));
-        }
+        vo.setStatusText(ManholeConstant.getRepairStatusName(repair.getStatus()));
 
         // 设置维修人员姓名
         if (repair.getRepairUserId() != null) {

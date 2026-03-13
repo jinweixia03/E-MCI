@@ -42,6 +42,12 @@ public class DetectionResultVO {
     @Schema(description = "处理时间(ms)")
     private Long processTime;
 
+    @Schema(description = "是否成功")
+    private Boolean success;
+
+    @Schema(description = "错误信息")
+    private String error;
+
     @Data
     @Builder
     @NoArgsConstructor
