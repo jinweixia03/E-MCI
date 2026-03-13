@@ -1,0 +1,154 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: emci-new
+
+  # MySQL 数据库配置（默认）
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/emci?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 20000
+      connection-test-query: SELECT 1
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 500MB
+      file-size-threshold: 0
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:/mapper/**/*.xml
+
+logging:
+  level:
+    com.alian.emci: debug
+    org.springframework.security: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+
+# 应用配置
+app:
+  jwt:
+    secret: your-256-bit-secret-your-256-bit-secret
+    expiration: 24
+    token-prefix: "Bearer "
+    header-name: Authorization
+  storage:
+    path: D:/1_Source/XFCode/emic/emci-new/uploads
+    url-prefix: /uploads
+
+# YOLO检测配置
+yolo:
+  # 模型路径（相对于项目根目录或绝对路径）
+  # ONNX版本: models/best.onnx | 原始版本: models/best.pt
+  model:
+    path: models/best.onnx
+  # Conda环境配置
+  # 使用ONNX版本时，可将enabled设为false，直接使用系统Python
+  conda:
+    # 是否使用conda环境
+    enabled: false
+    # conda环境名称
+    env-name: yolo
+    # conda可执行文件路径
+    path: D:/Environments/MiniConda3/Scripts/conda.exe
+    # 或者使用conda run模式
+    use-conda-run: true
+  # Python配置（不使用conda时使用系统Python）
+  # 请修改为实际的Python路径，例如conda环境: D:/Environments/MiniConda3/envs/yolo/python
+  python:
+    path: D:/Environments/MiniConda3/envs/yolo/python.exe
+  # 检测脚本路径
+  # ONNX版本: yolo_detect_onnx.py | 原始版本: yolo_detect.py
+  script:
+    path: yolo_detect_onnx.py
+  # 是否使用模拟模式（当模型不可用时）
+  use-mock: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    com.alian.emci: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/emci_test?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false
+
+logging:
+  level:
+    com.alian.emci: info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/emci?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false
+
+logging:
+  level:
+    com.alian.emci: warn
+    root: warn
+  file:
+    name: /var/log/emci/application.log

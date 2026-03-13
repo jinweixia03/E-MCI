@@ -1,0 +1,456 @@
+/* ============================
+   Flexbox 工具类
+   ============================ */
+
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+.flex-row-reverse { flex-direction: row-reverse; }
+.flex-col-reverse { flex-direction: column-reverse; }
+
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+.flex-wrap-reverse { flex-wrap: wrap-reverse; }
+
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.items-baseline { align-items: baseline; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.justify-evenly { justify-content: space-evenly; }
+
+.flex-1 { flex: 1 1 0%; }
+.flex-auto { flex: 1 1 auto; }
+.flex-none { flex: none; }
+.flex-grow { flex-grow: 1; }
+.flex-grow-0 { flex-grow: 0; }
+.flex-shrink { flex-shrink: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+
+/* ============================
+   Grid 工具类
+   ============================ */
+
+.grid { display: grid; }
+.inline-grid { display: inline-grid; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+.gap-0 { gap: 0; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-5 { gap: 20px; }
+.gap-6 { gap: 24px; }
+.gap-8 { gap: 32px; }
+.gap-10 { gap: 40px; }
+.gap-12 { gap: 48px; }
+
+/* ============================
+   Spacing 工具类 (Margin & Padding)
+   ============================ */
+
+.m-0 { margin: 0; }
+.m-1 { margin: 4px; }
+.m-2 { margin: 8px; }
+.m-3 { margin: 12px; }
+.m-4 { margin: 16px; }
+.m-5 { margin: 20px; }
+.m-6 { margin: 24px; }
+.m-8 { margin: 32px; }
+.m-10 { margin: 40px; }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+.my-auto { margin-top: auto; margin-bottom: auto; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-5 { margin-top: 20px; }
+.mt-6 { margin-top: 24px; }
+.mt-8 { margin-top: 32px; }
+.mt-10 { margin-top: 40px; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-5 { margin-bottom: 20px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.mb-10 { margin-bottom: 40px; }
+
+.ml-0 { margin-left: 0; }
+.ml-1 { margin-left: 4px; }
+.ml-2 { margin-left: 8px; }
+.ml-3 { margin-left: 12px; }
+.ml-4 { margin-left: 16px; }
+.ml-5 { margin-left: 20px; }
+.ml-6 { margin-left: 24px; }
+.ml-8 { margin-left: 32px; }
+
+.mr-0 { margin-right: 0; }
+.mr-1 { margin-right: 4px; }
+.mr-2 { margin-right: 8px; }
+.mr-3 { margin-right: 12px; }
+.mr-4 { margin-right: 16px; }
+.mr-5 { margin-right: 20px; }
+.mr-6 { margin-right: 24px; }
+.mr-8 { margin-right: 32px; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 12px; }
+.p-4 { padding: 16px; }
+.p-5 { padding: 20px; }
+.p-6 { padding: 24px; }
+.p-8 { padding: 32px; }
+.p-10 { padding: 40px; }
+
+.pt-0 { padding-top: 0; }
+.pt-1 { padding-top: 4px; }
+.pt-2 { padding-top: 8px; }
+.pt-3 { padding-top: 12px; }
+.pt-4 { padding-top: 16px; }
+.pt-5 { padding-top: 20px; }
+.pt-6 { padding-top: 24px; }
+.pt-8 { padding-top: 32px; }
+.pt-10 { padding-top: 40px; }
+
+.pb-0 { padding-bottom: 0; }
+.pb-1 { padding-bottom: 4px; }
+.pb-2 { padding-bottom: 8px; }
+.pb-3 { padding-bottom: 12px; }
+.pb-4 { padding-bottom: 16px; }
+.pb-5 { padding-bottom: 20px; }
+.pb-6 { padding-bottom: 24px; }
+.pb-8 { padding-bottom: 32px; }
+.pb-10 { padding-bottom: 40px; }
+
+.pl-0 { padding-left: 0; }
+.pl-1 { padding-left: 4px; }
+.pl-2 { padding-left: 8px; }
+.pl-3 { padding-left: 12px; }
+.pl-4 { padding-left: 16px; }
+.pl-5 { padding-left: 20px; }
+.pl-6 { padding-left: 24px; }
+.pl-8 { padding-left: 32px; }
+
+.pr-0 { padding-right: 0; }
+.pr-1 { padding-right: 4px; }
+.pr-2 { padding-right: 8px; }
+.pr-3 { padding-right: 12px; }
+.pr-4 { padding-right: 16px; }
+.pr-5 { padding-right: 20px; }
+.pr-6 { padding-right: 24px; }
+.pr-8 { padding-right: 32px; }
+
+.px-0 { padding-left: 0; padding-right: 0; }
+.px-1 { padding-left: 4px; padding-right: 4px; }
+.px-2 { padding-left: 8px; padding-right: 8px; }
+.px-3 { padding-left: 12px; padding-right: 12px; }
+.px-4 { padding-left: 16px; padding-right: 16px; }
+.px-5 { padding-left: 20px; padding-right: 20px; }
+.px-6 { padding-left: 24px; padding-right: 24px; }
+.px-8 { padding-left: 32px; padding-right: 32px; }
+
+.py-0 { padding-top: 0; padding-bottom: 0; }
+.py-1 { padding-top: 4px; padding-bottom: 4px; }
+.py-2 { padding-top: 8px; padding-bottom: 8px; }
+.py-3 { padding-top: 12px; padding-bottom: 12px; }
+.py-4 { padding-top: 16px; padding-bottom: 16px; }
+.py-5 { padding-top: 20px; padding-bottom: 20px; }
+.py-6 { padding-top: 24px; padding-bottom: 24px; }
+.py-8 { padding-top: 32px; padding-bottom: 32px; }
+
+/* ============================
+   文字工具类
+   ============================ */
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 14px; }
+.text-base { font-size: 16px; }
+.text-lg { font-size: 18px; }
+.text-xl { font-size: 20px; }
+.text-2xl { font-size: 24px; }
+.text-3xl { font-size: 30px; }
+.text-4xl { font-size: 36px; }
+
+.font-light { font-weight: 300; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================
+   尺寸工具类
+   ============================ */
+
+.w-full { width: 100%; }
+.w-screen { width: 100vw; }
+.w-auto { width: auto; }
+.w-0 { width: 0; }
+.w-1 { width: 4px; }
+.w-2 { width: 8px; }
+.w-4 { width: 16px; }
+.w-8 { width: 32px; }
+.w-12 { width: 48px; }
+.w-16 { width: 64px; }
+.w-20 { width: 80px; }
+.w-24 { width: 96px; }
+.w-32 { width: 128px; }
+.w-48 { width: 192px; }
+.w-64 { width: 256px; }
+
+.h-full { height: 100%; }
+.h-screen { height: 100vh; }
+.h-auto { height: auto; }
+.h-0 { height: 0; }
+.h-1 { height: 4px; }
+.h-2 { height: 8px; }
+.h-4 { height: 16px; }
+.h-8 { height: 32px; }
+.h-12 { height: 48px; }
+.h-16 { height: 64px; }
+.h-20 { height: 80px; }
+.h-24 { height: 96px; }
+.h-32 { height: 128px; }
+.h-48 { height: 192px; }
+.h-64 { height: 256px; }
+
+.min-h-0 { min-height: 0; }
+.min-h-full { min-height: 100%; }
+.min-h-screen { min-height: 100vh; }
+
+.max-h-full { max-height: 100%; }
+.max-h-screen { max-height: 100vh; }
+
+/* ============================
+   定位工具类
+   ============================ */
+
+.static { position: static; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+
+.top-0 { top: 0; }
+.top-1 { top: 4px; }
+.top-2 { top: 8px; }
+.top-4 { top: 16px; }
+
+.right-0 { right: 0; }
+.right-1 { right: 4px; }
+.right-2 { right: 8px; }
+.right-4 { right: 16px; }
+
+.bottom-0 { bottom: 0; }
+.bottom-1 { bottom: 4px; }
+.bottom-2 { bottom: 8px; }
+.bottom-4 { bottom: 16px; }
+
+.left-0 { left: 0; }
+.left-1 { left: 4px; }
+.left-2 { left: 8px; }
+.left-4 { left: 16px; }
+
+.z-0 { z-index: 0; }
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+.z-auto { z-index: auto; }
+
+/* ============================
+   显示工具类
+   ============================ */
+
+.block { display: block; }
+.inline-block { display: inline-block; }
+.inline { display: inline; }
+.hidden { display: none; }
+
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+.overflow-auto { overflow: auto; }
+.overflow-hidden { overflow: hidden; }
+.overflow-visible { overflow: visible; }
+.overflow-scroll { overflow: scroll; }
+
+.overflow-x-auto { overflow-x: auto; }
+.overflow-x-hidden { overflow-x: hidden; }
+.overflow-y-auto { overflow-y: auto; }
+.overflow-y-hidden { overflow-y: hidden; }
+
+/* ============================
+   圆角工具类
+   ============================ */
+
+.rounded-none { border-radius: 0; }
+.rounded-sm { border-radius: 2px; }
+.rounded { border-radius: 4px; }
+.rounded-md { border-radius: 6px; }
+.rounded-lg { border-radius: 8px; }
+.rounded-xl { border-radius: 12px; }
+.rounded-2xl { border-radius: 16px; }
+.rounded-3xl { border-radius: 24px; }
+.rounded-full { border-radius: 9999px; }
+
+/* ============================
+   阴影工具类
+   ============================ */
+
+.shadow-none { box-shadow: none; }
+.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+
+/* ============================
+   光标工具类
+   ============================ */
+
+.cursor-auto { cursor: auto; }
+.cursor-default { cursor: default; }
+.cursor-pointer { cursor: pointer; }
+.cursor-wait { cursor: wait; }
+.cursor-text { cursor: text; }
+.cursor-move { cursor: move; }
+.cursor-not-allowed { cursor: not-allowed; }
+
+/* ============================
+   用户选择工具类
+   ============================ */
+
+.select-none { user-select: none; }
+.select-text { user-select: text; }
+.select-all { user-select: all; }
+.select-auto { user-select: auto; }
+
+/* ============================
+   透明度假工具类
+   ============================ */
+
+.opacity-0 { opacity: 0; }
+.opacity-25 { opacity: 0.25; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }
+
+/* ============================
+   过渡工具类
+   ============================ */
+
+.transition-none { transition-property: none; }
+.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.transition-colors { transition-property: background-color, border-color, color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.transition-opacity { transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.transition-shadow { transition-property: box-shadow; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.transition-transform { transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+
+/* ============================
+   变换工具类
+   ============================ */
+
+.transform { transform: translateX(var(--tw-translate-x, 0)) translateY(var(--tw-translate-y, 0)) rotate(var(--tw-rotate, 0)) skewX(var(--tw-skew-x, 0)) skewY(var(--tw-skew-y, 0)) scaleX(var(--tw-scale-x, 1)) scaleY(var(--tw-scale-y, 1)); }
+.transform-none { transform: none; }
+
+.scale-0 { transform: scale(0); }
+.scale-50 { transform: scale(0.5); }
+.scale-75 { transform: scale(0.75); }
+.scale-90 { transform: scale(0.9); }
+.scale-95 { transform: scale(0.95); }
+.scale-100 { transform: scale(1); }
+.scale-105 { transform: scale(1.05); }
+.scale-110 { transform: scale(1.1); }
+.scale-125 { transform: scale(1.25); }
+.scale-150 { transform: scale(1.5); }
+
+.rotate-0 { transform: rotate(0deg); }
+.rotate-45 { transform: rotate(45deg); }
+.rotate-90 { transform: rotate(90deg); }
+.rotate-180 { transform: rotate(180deg); }
+
+/* ============================
+   无障碍
+   ============================ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}

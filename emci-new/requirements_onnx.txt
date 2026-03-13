@@ -1,0 +1,7 @@
+# YOLO ONNX Runtime 依赖
+# 无需conda，仅需Python 3.8+
+# 安装命令: pip install -r requirements_onnx.txt
+
+onnxruntime>=1.15.0
+opencv-python>=4.8.0
+numpy>=1.24.0
